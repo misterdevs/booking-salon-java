@@ -9,60 +9,68 @@ import com.booking.models.Reservation;
 import com.booking.models.Service;
 import com.booking.repositories.PersonRepository;
 import com.booking.repositories.ServiceRepository;
+import com.booking.utilities.UtilityMenu;
 
 public class MenuService {
     private static List<Person> personList = PersonRepository.getAllPerson();
     private static List<Service> serviceList = ServiceRepository.getAllService();
     private static List<Reservation> reservationList = new ArrayList<>();
     private static Scanner input = new Scanner(System.in);
+    private static UtilityMenu menu = new UtilityMenu();
+    private PrintService printService = new PrintService();
+    private int idNumber = 1;
 
-    public static void mainMenu() {
-        String[] mainMenuArr = {"Show Data", "Create Reservation", "Complete/cancel reservation", "Exit"};
-        String[] subMenuArr = {"Recent Reservation", "Show Customer", "Show Available Employee", "Back to main menu"};
-    
-        int optionMainMenu;
-        int optionSubMenu;
+    public void mainMenu() {
+        String[] mainMenuArr = { "Show Data", "Create Reservation", "Complete/Cancel Reservation" };
+        menu.createMenu(s -> handleMainMenu(s), "Aplikasi Booking Salon by MRDevs", mainMenuArr, 0, "Exit");
+        System.out.println("==========================================");
+        System.out.println("APPLICATION HAS BEEN CLOSED");
+        System.out.println("==========================================");
+        input.close();
+    }
 
-		boolean backToMainMenu = false;
-        boolean backToSubMenu = false;
-        do {
-            PrintService.printMenu("Main Menu", mainMenuArr);
-            optionMainMenu = Integer.valueOf(input.nextLine());
-            switch (optionMainMenu) {
-                case 1:
-                    do {
-                        PrintService.printMenu("Show Data", subMenuArr);
-                        optionSubMenu = Integer.valueOf(input.nextLine());
-                        // Sub menu - menu 1
-                        switch (optionSubMenu) {
-                            case 1:
-                                // panggil fitur tampilkan recent reservation
-                                break;
-                            case 2:
-                                // panggil fitur tampilkan semua customer
-                                break;
-                            case 3:
-                                // panggil fitur tampilkan semua employee
-                                break;
-                            case 4:
-                                // panggil fitur tampilkan history reservation + total keuntungan
-                                break;
-                            case 0:
-                                backToSubMenu = false;
-                        }
-                    } while (!backToSubMenu);
-                    break;
-                case 2:
-                    // panggil fitur menambahkan reservation
-                    break;
-                case 3:
-                    // panggil fitur mengubah workstage menjadi finish/cancel
-                    break;
-                case 0:
-                    backToMainMenu = false;
-                    break;
-            }
-        } while (!backToMainMenu);
-		
-	}
+    private void handleMainMenu(String chosenMenu) {
+        menu.resetDisplay();
+        switch (Integer.valueOf(chosenMenu)) {
+            case 1:
+                String[] showDataMenuArr = { "Recent Reservation", "Show Customer", "Show Employee",
+                        "History Reservation" };
+                menu.createMenu(s -> handleShowDataMenu(s), "Show Data", showDataMenuArr, 99, "Back to Main Menu");
+                break;
+            case 2:
+                ReservationService.createReservation(reservationList, personList, serviceList, idNumber++);
+                break;
+            case 3:
+                ReservationService.editReservationWorkstage(reservationList);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void handleShowDataMenu(String chosenMenu) {
+        menu.resetDisplay();
+        switch (Integer.valueOf(chosenMenu)) {
+            case 1:
+                printService.showRecentReservation(reservationList);
+                menu.enterToContinue();
+                break;
+            case 2:
+                printService.showAllCustomer(personList);
+                menu.enterToContinue();
+                break;
+            case 3:
+                printService.showAllEmployee(personList);
+                menu.enterToContinue();
+                break;
+            case 4:
+                printService.showHistoryReservation(reservationList);
+                menu.enterToContinue();
+                break;
+            default:
+                break;
+        }
+
+    }
 }
