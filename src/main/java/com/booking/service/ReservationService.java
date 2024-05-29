@@ -31,11 +31,13 @@ public class ReservationService {
             // input with validation to check if the customer id is registered
             String customerId = input.validate("Enter Customer ID", "Customer ID not registered!",
                     s -> getCustomerByCustomerId(personList, s) != null);
+            menu.resetDisplay();
             // table all employees view
             printService.showAllEmployee(personList);
             // input with validation to check if the employee id is registered
             String employeeId = input.validate("Enter Employee ID", "Employee ID not registered!",
                     s -> getEmployeeByEmployeeId(personList, s) != null);
+            menu.resetDisplay();
             // table all services view
             printService.showAllService(serviceList);
 
